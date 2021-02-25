@@ -18,7 +18,6 @@
     "require": {
         "php": "^7.3|^8.0",
         "grantholle/powerschool-api": "^2.4",
-        "intonate/tinker-zero": "^1.1",
         "laravel-zero/framework": "^8.4"
     },
     "require-dev": {
