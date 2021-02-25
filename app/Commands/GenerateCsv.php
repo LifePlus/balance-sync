@@ -90,7 +90,7 @@ class GenerateCsv extends Command
      */
     public function schedule(Schedule $schedule): void
     {
-        // $schedule->command(static::class)->everyMinute();
+         $schedule->command(static::class)->dailyAt('13:15');
     }
 
     protected function getStudents($school, $page)
