@@ -56,7 +56,6 @@ return [
     'providers' => [
         App\Providers\AppServiceProvider::class,
         \GrantHolle\PowerSchool\Api\PowerSchoolApiServiceProvider::class,
-        \Intonate\TinkerZero\TinkerZeroServiceProvider::class,
     ],
 
 ];
