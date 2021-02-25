@@ -15,6 +15,8 @@ return [
 
     'name' => 'Application',
 
+    'timezone' => 'Asia/Shanghai',
+
     /*
     |--------------------------------------------------------------------------
     | Application Version
