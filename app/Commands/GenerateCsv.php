@@ -97,9 +97,8 @@ class GenerateCsv extends Command
     {
         return PowerSchool::endpoint("/ws/v1/school/{$school}/student")
             ->extensions('u_powermenu_plus_extension')
-            ->expansions('school_enrollment')
             ->q('school_enrollment.enroll_status==A')
-            ->pageSize(1)
+            ->pageSize(100)
             ->page($page)
             ->get();
     }
