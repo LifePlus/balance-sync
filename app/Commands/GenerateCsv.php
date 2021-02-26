@@ -44,6 +44,7 @@ class GenerateCsv extends Command
             108, // CDIS
             153, // ISQ
             106, // ISW
+            303, // YHIS
         ];
 
         foreach ($schools as $school) {
