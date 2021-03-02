@@ -42,6 +42,7 @@ class GenerateCsv extends Command
         $schools = [
             6, // TIS
             108, // CDIS
+            353, // CDES
             153, // ISQ
             106, // ISW
             303, // YHIS
