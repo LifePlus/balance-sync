@@ -19,8 +19,8 @@ pipeline {
                 withCredentials([sshUserPrivateKey(credentialsId: 'gholle', keyFileVariable: 'SSH_KEY', usernameVariable: 'SSH_USER')]) {
                     sh '''
                         chmod 600 "$SSH_KEY"
-                        scp -o StrictHostKeyChecking=no -i "$SSH_KEY" site.tar.gz "$SSH_USER"@lp-apps03-new:~
-                        ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" "$SSH_USER"@lp-apps03-new 'sudo -u autocomm bash -s' << 'DEPLOY'
+                        scp -o StrictHostKeyChecking=no -i "$SSH_KEY" site.tar.gz "$SSH_USER"@10.100.1.127:~
+                        ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" "$SSH_USER"@10.100.1.127 'sudo -u autocomm bash -s' << 'DEPLOY'
                             set -e
                             cd /home/autocomm/balance-sync
 
