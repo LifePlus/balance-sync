@@ -16,13 +16,13 @@
         }
     ],
     "require": {
-        "php": "^7.3|^8.0",
-        "grantholle/powerschool-api": "^2.4",
-        "laravel-zero/framework": "^8.4"
+        "php": "^8.2",
+        "grantholle/powerschool-api": "^4.4",
+        "laravel-zero/framework": "^11.0"
     },
     "require-dev": {
-        "mockery/mockery": "^1.4.2",
-        "pestphp/pest": "^1.0"
+        "mockery/mockery": "^1.6",
+        "pestphp/pest": "^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -37,7 +37,10 @@
     "config": {
         "preferred-install": "dist",
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
