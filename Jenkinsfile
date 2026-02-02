@@ -9,7 +9,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'composer install -o --no-dev --no-ansi --no-scripts'
+                sh 'composer install -o --no-dev --no-ansi --no-scripts --ignore-platform-req=php'
             }
         }
         stage('Deploy') {
