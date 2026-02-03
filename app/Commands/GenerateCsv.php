@@ -70,13 +70,16 @@ class GenerateCsv extends Command
 
                 $page++;
 
-                $students = is_array(optional($results->students)->student)
-                    ? $results->students->student
-                    : [optional($results->students)->student];
+                $students = $results->data ?? $results->students->student ?? [];
+
+                // Normalize to array if single result
+                if (!is_array($students)) {
+                    $students = [$students];
+                }
 
                 $this->line("  Page " . ($page - 1) . ": " . count($students) . " students returned");
 
-                if ($students[0] === null) {
+                if (empty($students) || $students[0] === null) {
                     $this->line("  No more students, moving to next school");
                     break;
                 }
