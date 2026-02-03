@@ -80,6 +80,8 @@ class GenerateCsv extends Command
             }
         }
 
+        fclose($resource);
+
         $this->info("Done!");
 
         return 0;
