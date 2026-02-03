@@ -38,6 +38,9 @@ class GenerateCsv extends Command
         }
 
         $resource = fopen($this->outputPath, 'w');
+        $totalWritten = 0;
+        $totalStudents = 0;
+        $skippedNoExtension = 0;
 
         $schools = [
             6, // TIS
@@ -54,19 +57,35 @@ class GenerateCsv extends Command
 
             $page = 1;
             $continue = true;
+            $schoolWritten = 0;
 
             while ($continue) {
-                $results = $this->getStudents($school, $page++);
+                $results = $this->getStudents($school, $page);
+
+                // Debug: dump raw response for first page of first school
+                if ($school === 6 && $page === 1) {
+                    $this->warn("Raw API response for school 6, page 1:");
+                    $this->line(json_encode($results, JSON_PRETTY_PRINT));
+                }
+
+                $page++;
+
                 $students = is_array(optional($results->students)->student)
                     ? $results->students->student
                     : [optional($results->students)->student];
 
+                $this->line("  Page " . ($page - 1) . ": " . count($students) . " students returned");
+
                 if ($students[0] === null) {
+                    $this->line("  No more students, moving to next school");
                     break;
                 }
 
+                $totalStudents += count($students);
+
                 foreach ($students as $student) {
                     if (!isset($student->_extension_data)) {
+                        $skippedNoExtension++;
                         continue;
                     }
 
@@ -76,12 +95,21 @@ class GenerateCsv extends Command
                     ];
 
                     fputcsv($resource, $fields);
+                    $totalWritten++;
+                    $schoolWritten++;
                 }
             }
+
+            $this->info("  School {$school} complete: {$schoolWritten} rows written");
         }
 
         fclose($resource);
 
+        $this->info("=== Summary ===");
+        $this->info("Total students fetched: {$totalStudents}");
+        $this->info("Skipped (no extension data): {$skippedNoExtension}");
+        $this->info("Total rows written to CSV: {$totalWritten}");
+        $this->info("Output file: {$this->outputPath}");
         $this->info("Done!");
 
         return 0;
