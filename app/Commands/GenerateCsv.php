@@ -33,14 +33,12 @@ class GenerateCsv extends Command
     {
         $this->outputPath = storage_path('app/uploads/import.csv');
 
-        if (!file_exists($this->outputPath)) {
+        if (!file_exists(dirname($this->outputPath))) {
             mkdir(dirname($this->outputPath), 0755, true);
         }
 
         $resource = fopen($this->outputPath, 'w');
         $totalWritten = 0;
-        $totalStudents = 0;
-        $skippedNoExtension = 0;
 
         $schools = [
             6, // TIS
@@ -56,63 +54,35 @@ class GenerateCsv extends Command
             $this->info("Processing school {$school}");
 
             $page = 1;
-            $continue = true;
-            $schoolWritten = 0;
 
-            while ($continue) {
-                $results = $this->getStudents($school, $page);
+            while (true) {
+                $results = $this->getStudents($school, $page++);
 
-                // Debug: dump raw response for first page of first school
-                if ($school === 6 && $page === 1) {
-                    $this->warn("Raw API response for school 6, page 1:");
-                    $this->line(json_encode($results, JSON_PRETTY_PRINT));
-                }
-
-                $page++;
-
-                $students = $results->data ?? $results->students->student ?? [];
-
-                // Normalize to array if single result
-                if (!is_array($students)) {
-                    $students = [$students];
-                }
-
-                $this->line("  Page " . ($page - 1) . ": " . count($students) . " students returned");
-
-                if (empty($students) || $students[0] === null) {
-                    $this->line("  No more students, moving to next school");
+                if ($results->isEmpty()) {
                     break;
                 }
 
-                $totalStudents += count($students);
+                foreach ($results as $student) {
+                    $extensionData = $student['_extension_data'] ?? null;
 
-                foreach ($students as $student) {
-                    if (!isset($student->_extension_data)) {
-                        $skippedNoExtension++;
+                    if (!$extensionData) {
                         continue;
                     }
 
                     $fields = [
-                        $student->local_id, // student_number
-                        $student->_extension_data->_table_extension->_field[0]->value, // balance1
+                        $student['local_id'],
+                        $extensionData['_table_extension']['_field'][0]['value'],
                     ];
 
                     fputcsv($resource, $fields);
                     $totalWritten++;
-                    $schoolWritten++;
                 }
             }
-
-            $this->info("  School {$school} complete: {$schoolWritten} rows written");
         }
 
         fclose($resource);
 
-        $this->info("=== Summary ===");
-        $this->info("Total students fetched: {$totalStudents}");
-        $this->info("Skipped (no extension data): {$skippedNoExtension}");
-        $this->info("Total rows written to CSV: {$totalWritten}");
-        $this->info("Output file: {$this->outputPath}");
+        $this->info("Total rows written: {$totalWritten}");
         $this->info("Done!");
 
         return 0;
